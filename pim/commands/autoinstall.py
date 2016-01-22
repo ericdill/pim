@@ -8,6 +8,7 @@ from clint.textui import indent, puts, prompt, progress
 from ..utils import write, retrieve, success, error, info, requirements, spinner
 from .install import _install
 import depfinder
+import ast
 
 
 @click.command('autoinstall', short_help='add to requirements', options_metavar='<options>')
@@ -47,14 +48,14 @@ def autoinstall(globally, auto, optional):
     for dep in deps['optional']:
         echo('  - %s' % dep)
 
-    requirements = set(deps['required'])
+    all_deps = set(deps['required'])
     if optional:
         echo('')
         echo('Adding all optional libraries to requirements.txt You might '
              'consider carefully reviewing these optional dependencies')
-        requirements = requirements.union(set(deps['optional']))
+        all_deps = all_deps.union(set(deps['optional']))
 
-    _install(requirements, globally)
+    _install(all_deps, globally)
 
 
 
