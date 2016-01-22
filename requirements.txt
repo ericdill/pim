@@ -4,3 +4,4 @@ twine
 setuptools
 clint
 click
+depfinder

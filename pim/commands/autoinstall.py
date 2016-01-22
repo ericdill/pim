@@ -6,13 +6,15 @@ import time
 from click import echo
 from clint.textui import indent, puts, prompt, progress
 from ..utils import write, retrieve, success, error, info, requirements, spinner
+from .install import _install
 import depfinder
 
 
 @click.command('autoinstall', short_help='add to requirements', options_metavar='<options>')
 @click.option('--globally', '-g', is_flag=True, help='autoinstall into your environment using pip.')
 @click.option('--auto', '-a', is_flag=True, help='Automatically update your project requirements from your source code')
-def autoinstall(globally, auto):
+@click.option('--optional', '-o', is_flag=True, help='Add optional dependencies to requirements.txt')
+def autoinstall(globally, auto, optional):
     """
     This should just wrap install
     """
@@ -33,8 +35,28 @@ def autoinstall(globally, auto):
         visitor.visit(tree)
         return visitor.name
 
-    package_name = _find_package_name(_find_setuppy())
-    depfinder.
+    setuppy_path = _find_setuppy()
+    package_name = _find_package_name(setuppy_path)
+    path_to_source = os.path.join(os.path.split(setuppy_path)[0], package_name)
+    deps = depfinder.simple_import_search(path_to_source)
+    echo('Required Libraries')
+    for dep in deps['required']:
+        echo('  - %s' % dep)
+    echo('')
+    echo('Optional Libraries (Found inside function/class/try-except)')
+    for dep in deps['optional']:
+        echo('  - %s' % dep)
+
+    requirements = set(deps['required'])
+    if optional:
+        echo('')
+        echo('Adding all optional libraries to requirements.txt You might '
+             'consider carefully reviewing these optional dependencies')
+        requirements = requirements.union(set(deps['optional']))
+
+    _install(requirements, globally)
+
+
 
 
 def _find_setuppy(path='.', checked_folders=None):
