@@ -11,6 +11,22 @@ from ..utils import write, retrieve, success, error, info, requirements, spinner
 @click.command('install', short_help='add to requirements', options_metavar='<options>')
 @click.option('--globally', '-g', is_flag=True, help='Install into your environment using pip.')
 def install(packages, globally):
+    _install(packages, globally)
+
+
+def _install(packages, globally=False):
+    """
+    Add `packages` to requirements.txt. Optionally install them into your
+    current environment
+
+    Parameters
+    ----------
+    packages : list
+        List of packages to add to requirements.txt
+    globally : bool, optional
+        Optionally install `packages` into your current python environment.
+        Defaults to False
+    """
     required = requirements.load()
 
     for name in packages:

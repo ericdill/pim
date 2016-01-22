@@ -149,7 +149,7 @@ class spinner(threading.Thread):
     """
     def __init__(self):
         if os.name == 'posix':
-            self.chars = (unicodedata.lookup('FIGURE DASH'),'\\ ','| ','/ ')
+            self.chars = ('-', '\\ ', '| ', '/ ')
         else:
             self.chars = ('-','\\ ','| ','/ ')
         self.running = True
